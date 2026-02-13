@@ -7,7 +7,8 @@
 - [ ] leetcode 876
 - [ ] leetcode 3
 - [ ] leetcode 206
-- [ ] leetcode 
+- [ ] leetcode 42
+- [ ] leetcode 209
 
 ## leetcode 167 Two Sum II - Input Array Is Sorted
 
