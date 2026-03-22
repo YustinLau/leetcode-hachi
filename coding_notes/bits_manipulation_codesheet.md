@@ -6,6 +6,7 @@
 - [x] leetcode 136
 - [x] leetcode 268
 
+[toc]
 
 ## leetcode 191 Number of 1 bits
 
