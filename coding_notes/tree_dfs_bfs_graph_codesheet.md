@@ -2,7 +2,7 @@
 
 - [x]  leetcode 210
 - [x]  leetcode 542
-- [ ]  leetcode 46
+- [x]  leetcode 46
 
 [toc]
 
@@ -450,5 +450,4 @@ http://googleusercontent.com/immersive_entry_chip/0
 恭喜你！如果你能掌握这套“三步走”框架，你就已经攻克了面试中最具威慑力的题型之一。
 
 **接下来，我们是去实际演练二叉树的【102. 层序遍历】，还是你想再看一道【组合】（Combination）类题目，对比一下 `startIndex` 的精妙之处？**
-
 
