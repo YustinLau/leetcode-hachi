@@ -3,11 +3,11 @@
 - [x]  LC 146 (LRU Cache - 极其高频)
 - [x]  LC 206
 - [x]  LC 92
-- [ ]  LC 23
-- [ ]  LC 21
-- [ ]  LC 141
-- [ ]  LC 622
-- [ ]  LC 232
+- [x]  LC 23
+- [x]  LC 21
+- [x]  LC 141
+- [x]  LC 622
+- [x]  LC 232
 
 [toc]
 
@@ -537,3 +537,121 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
 **要不我们用这种“对比两个元素”的直觉，去完成那个【101. 对称二叉树】？在 23 题里我们是对比 K 个链表，而在 101 题里，我们只需要对比“左边的左”和“右边的右”。**
 
 **你想试试递归（DFS）写法，还是用类似层序遍历的队列（BFS）写法？**
+
+## leetcode 21 
+
+## leetcode 141
+
+## leetcode 232
+
+## leetcode 622 Design Circular Queue
+
+设计循环队列（Circular Queue）是面试中考查**底层数据结构实现**的经典题。它不像算法题那样侧重于逻辑推演，而是侧重于对**内存布局**和**边界状态**（判满/判空）的精准控制。
+
+遇到这类“设计型”题目，核心思路是：**先定物理结构，再解逻辑矛盾。**
+
+---
+
+### 1. 物理结构：数组 vs 链表
+* **链表**：虽然可以实现，但会涉及频繁的 `new/delete` 内存操作。
+* **数组（首选）**：循环队列的本质就是**固定内存的复用**。在 Linux 内核（如环形缓冲区 kfifo）或嵌入式开发中，通常都使用定长数组。
+
+---
+
+### 2. 核心逻辑矛盾：如何区分“空”与“满”？
+这是这道题唯一的难点。假设数组大小为 `size`，用 `head` 指向队首，`tail` 指向队尾的下一个位置：
+* **初始状态**：`head = 0, tail = 0`。
+* **队列为空**：`head == tail`。
+* **队列为满**：如果直接填满，此时 `head == tail` 也会成立。**矛盾出现了！**
+
+**解决方案有两种：**
+1.  **额外增加一个 `size` 变量**：记录当前元素个数。简单直观。
+2.  **浪费一个格子的空间**（面试官更喜欢的解法）：
+    * 数组实际开辟 `k + 1` 的空间。
+    * **判空**：`head == tail`
+    * **判满**：`(tail + 1) % capacity == head`
+
+---
+
+### 3. C++ 数组实现（浪费一个格子的方案）
+
+```cpp
+class MyCircularQueue {
+private:
+    vector<int> data;
+    int head;
+    int tail;
+    int capacity;
+
+public:
+    MyCircularQueue(int k) {
+        capacity = k + 1; // 多开一个位置用于区分空满
+        data.assign(capacity, 0);
+        head = 0;
+        tail = 0;
+    }
+
+    bool enQueue(int value) {
+        if (isFull()) return false;
+        data[tail] = value;
+        tail = (tail + 1) % capacity; // 循环取模
+        return true;
+    }
+
+    bool deQueue() {
+        if (isEmpty()) return false;
+        head = (head + 1) % capacity; // 循环取模
+        return true;
+    }
+
+    int Front() {
+        return isEmpty() ? -1 : data[head];
+    }
+
+    int Rear() {
+        // 注意：tail 指向的是下一个空位，所以要找 tail - 1
+        return isEmpty() ? -1 : data[(tail - 1 + capacity) % capacity];
+    }
+
+    bool isEmpty() {
+        return head == tail;
+    }
+
+    bool isFull() {
+        return (tail + 1) % capacity == head;
+    }
+};
+```
+
+---
+
+### 4. 遇到“设计类”题目的通用模版
+
+1.  **确保存储方案**：数组（连续内存，性能好）还是链表（动态，灵活）。
+2.  **定义指针/状态**：
+    * 双指针（`head`, `tail`）是标配。
+    * 考虑是否需要 `count` 或 `flag` 辅助判断。
+3.  **处理“越界”即“循环”**：
+    * 核心公式：`index = (index + 1) % capacity`。
+    * 在内核或高性能场景下，如果 `capacity` 是 2 的幂次，可以使用 `index & (capacity - 1)` 来代替取模运算，效率更高。
+
+---
+
+### 🛡️ 教练复盘：思维的相似性
+
+这道题其实是 **88. 合并两个有序数组** 以及 **151. 翻转单词** 逻辑的延伸。
+* **88 题**：利用数组末尾闲置空间（指针挪位）。
+* **622 题**：利用数组的头尾相连（取模模拟圆环）。
+
+**都是在受限的内存空间里，通过精妙的指针计算来完成任务。**
+
+---
+
+### 🏁 最后一站：101. 对称二叉树
+
+你今天简直是完成了一场“数据结构马拉松”：
+**双指针 $\rightarrow$ 栈 $\rightarrow$ 堆 $\rightarrow$ 快速选择 $\rightarrow$ 滑动窗口 $\rightarrow$ 前缀和哈希表 $\rightarrow$ 循环队列。**
+
+这些工具就像你工具箱里的扳手和螺丝刀。而 **[101. 对称二叉树]** 则是检验你是否能熟练使用这些工具进行**结构化思考**的试金石。
+
+**我们要不要用最后 5 分钟，把这道二叉树的递归代码写了？你看，递归本身其实也是一种“隐形的循环队列”（函数调用栈），只不过它是由编译器帮你维护的。**
